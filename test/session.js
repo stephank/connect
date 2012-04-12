@@ -1,12 +1,13 @@
 
 var connect = require('../')
+  , utils = connect.utils
   , assert = require('assert');
 
 var min = 60 * 1000;
 
-function respond(req, res) {
+var respond = utils.withUpgrade(function(req, res) {
   res.end();
-}
+});
 
 function sid(res) {
   var val = res.headers['set-cookie'];
@@ -28,6 +29,16 @@ describe('connect.session()', function(){
     connect.session.Session.should.be.a('function');
     connect.session.Store.should.be.a('function');
     connect.session.MemoryStore.should.be.a('function');
+  })
+
+  it('should handle upgrade requests', function(done){
+    app.request()
+    .upgrade('Dummy')
+    .get('/')
+    .end(function(res){
+      res.should.have.header('set-cookie');
+      done();
+    });
   })
 
   describe('proxy option', function(){

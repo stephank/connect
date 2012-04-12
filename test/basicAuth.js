@@ -3,6 +3,16 @@ var connect = require('../');
 
 function test(app, signature) {
   describe(signature, function(){
+    it('should respond to upgrade requests', function(done){
+      app.request()
+      .upgrade('Dummy')
+      .get('/')
+      .end(function(res){
+        res.statusCode.should.equal(401);
+        done();
+      });
+    })
+
     describe('when missing Authorization', function(){
       it('should respond with 401 and WWW-Authenticate', function(done){
         app.request()

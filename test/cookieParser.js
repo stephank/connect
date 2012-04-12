@@ -11,11 +11,18 @@ app.use(function(req, res, next){
   res.end(JSON.stringify(req.signedCookies));
 });
 
-app.use(function(req, res, next){
+app.use(utils.withUpgrade(function(req, res, next){
   res.end(JSON.stringify(req.cookies));
-});
+}));
 
 describe('connect.cookieParser()', function(){
+  it('should handle upgrade requests', function(done){
+    app.request()
+    .upgrade('Dummy')
+    .get('/')
+    .expect('{}', done);
+  })
+
   describe('when no cookies are sent', function(){
     it('should default req.cookies to {}', function(done){
       app.request()

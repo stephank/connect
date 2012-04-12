@@ -1,5 +1,6 @@
 
-var connect = require('../');
+var connect = require('../')
+  , utils = connect.utils;
 
 function sess(res) {
   return res.headers['set-cookie'][0];
@@ -18,6 +19,17 @@ describe('connect.cookieSession()', function(){
     app = connect();
     app.use(connect.cookieParser('some secret'));
     app.use(connect.cookieSession());
+  })
+
+  it('should handle upgrade requests', function(done){
+    app.use(utils.withUpgrade(function(req, res, next){
+      res.end(String(!!req.session));
+    }));
+
+    app.request()
+    .upgrade('Dummy')
+    .get('/')
+    .expect('true', done);
   })
 
   it('should default to a browser-session length cookie', function(done){

@@ -119,3 +119,11 @@ describe('utils.mime(req)', function(){
       .should.equal('text/html');
   })
 })
+
+describe('utils.withUpgrade(fn)', function(){
+  it('should return the marked function', function(){
+    var fn = utils.withUpgrade(function() {});
+    fn.should.be.a('function');
+    fn.supportsUpgrade.should.be.true;
+  })
+})
